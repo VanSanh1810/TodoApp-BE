@@ -1,41 +1,20 @@
 import { Module } from '@nestjs/common';
-import { TaskModule } from './task/task.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TaskEntity } from './typeorm/entities/Task.entity';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'mysql',
-    //   host: 'localhost',
-    //   port: 3306,
-    //   username: 'root',
-    //   password: 'root',
-    //   database: 'TodosApp',
-    //   entities: [TaskEntity],
-    //   synchronize: true,
-    // }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
-        username: configService.get<string>('DATABASE_USER'),
-        password: configService.get<string>('DATABASE_PASS'),
-        database: configService.get<string>('DATABASE_NAME'),
-        entities: [TaskEntity],
-        synchronize: true,
-      }),
-      inject: [ConfigService],
-    }),
-    TaskModule,
+    DatabaseModule,
+    AuthModule,
+    UsersModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}
